@@ -1,2 +1,2 @@
 #!/bin/bash
-cut -d ':' -f 1,2 /etc/pwd | sort
+cut -d ':' -f 1,6 /etc/pwd | sort
