@@ -1,2 +1,2 @@
 #!/bin/bash
-cat /etc/pwd | sort -u
+cut -d ':' -f 1,2 /etc/pwd | sort
