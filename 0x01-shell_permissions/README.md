@@ -1,4 +1,4 @@
-#0x01. Shell, permissions
+# 0x01. Shell, permissions
 Project done during **ALX Software Engineerin Training Programme**. It aims to learn about file access rights and permissions, how to change file and directory permissions for the user, group and others in **Shell**.
 
 ## Technologies
