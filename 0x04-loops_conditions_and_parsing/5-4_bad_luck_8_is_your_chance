@@ -13,7 +13,8 @@ while [ "$i" -lt 10 ]; do
 		echo "good luck";
 		i=$((i + 1));
 		continue;
+	else
+		echo "Best School";
 	fi
-	echo "Best School";
 	i=$((i + 1));
 done;
