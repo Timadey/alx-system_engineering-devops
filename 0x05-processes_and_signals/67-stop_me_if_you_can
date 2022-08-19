@@ -2,4 +2,4 @@
 # A Bash Script that sends signal "SIGTERM" to the process started by
 # '7-highlander' program
 
-pkill --signal SIGTERM -t pts/0 -f ./7-highlander
+pkill --signal SIGTERM  -f 7-highlander
