@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# A Bash Script that sends signal "SIGKILL" to the process started by
+# '7-highlander' program
+
+pkill --signal SIGKILL -t pts/0 -f ./7-highlander
