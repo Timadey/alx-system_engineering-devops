@@ -4,7 +4,7 @@
 # When querying Nginx at its root / with a GET request
 # (requesting a page) using curl, it must return a page
 
-apt-get update
+apt-get -y update
 apt-get -y install nginx
 echo "Hello World" > /var/www/html/index.nginx-debian.html
 service nginx start
