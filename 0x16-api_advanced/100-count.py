@@ -1,72 +1,89 @@
 #!/usr/bin/python3
-"""
-Function that queries the Reddit API and prints
-the top ten hot posts of a subreddit
-"""
-import re
+""" Functions to adcquire info from API Reddit"""
 import requests
-import sys
-
-
-def add_title(dictionary, hot_posts):
-    """ Adds item into a list """
-    if len(hot_posts) == 0:
-        return
-
-    title = hot_posts[0]['data']['title'].split()
-    for word in title:
-        for key in dictionary.keys():
-            c = re.compile("^{}$".format(key), re.I)
-            if c.findall(word):
-                dictionary[key] += 1
-    hot_posts.pop(0)
-    add_title(dictionary, hot_posts)
-
-
-def recurse(subreddit, dictionary, after=None):
-    """ Queries to Reddit API """
-    u_agent = 'Mozilla/5.0'
-    headers = {
-        'User-Agent': u_agent
-    }
-
-    params = {
-        'after': after
-    }
-
-    url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
-    res = requests.get(url,
-                       headers=headers,
-                       params=params,
-                       allow_redirects=False)
-
-    if res.status_code != 200:
-        return None
-
-    dic = res.json()
-    hot_posts = dic['data']['children']
-    add_title(dictionary, hot_posts)
-    after = dic['data']['after']
-    if not after:
-        return
-    recurse(subreddit, dictionary, after=after)
+after = None
 
 
 def count_words(subreddit, word_list):
-    """ Init function """
-    dictionary = {}
+    """Count the titles found with wordlist in subreddit"""
+    my_list = recurse(subreddit)
+    my_dict = {}
 
-    for word in word_list:
-        dictionary[word] = 0
+    if my_list:
+        for word in word_list:
+            my_dict[word] = 0
 
-    recurse(subreddit, dictionary)
+        for title in my_list:
+            title_split = title.split(" ")
 
-    l = sorted(dictionary.items(), key=lambda kv: kv[1])
-    l.reverse()
+            for iter in title_split:
+                for iter_split in word_list:
+                    if iter.lower() == iter_split.lower():
+                        my_dict[iter_split] += 1
 
-    if len(l) != 0:
-        for item in l:
-            if item[1] is not 0:
-                print("{}: {}".format(item[0], item[1]))
+        for key, val in sorted(my_dict.items(),  key=lambda x: x[1],
+                               reverse=True):
+            if val != 0:
+                print("{}: {}".format(key, val))
+
+
+def recurse(subreddit, hot_list=[]):
+    """ recurse is a function that return hot list from
+        a subreddit"""
+    global after
+    headers = {'User-Agent': 'ledbag123'}
+    url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
+    parameters = {'after': after}
+    response = requests.get(url, headers=headers, allow_redirects=False,
+                            params=parameters)
+    if response.status_code == 200:
+        prox = response.json().get('data').get('after')
+
+        if prox is not None:
+            after = prox
+            recurse(subreddit, hot_list)
+        list_titles = response.json().get('data').get('children')
+
+        for title_ in list_titles:
+            hot_list.append(title_.get('data').get('title'))
+        return hot_list
     else:
-        print("")
+        return (None)
+'''    
+#!/usr/bin/python3
+""" Exporting csv files"""
+import json
+import requests
+import sys
+def count_words(subreddit, word_list, after="null", host_list=[]):
+    """Read reddit API and return top 10 hotspots """
+    username = 'ledbag123'
+    password = 'Reddit72'
+    user_pass_dict = {'user': username, 'passwd': password, 'api_type': 'json'}
+    headers = {'user-agent': '/u/ledbag123 API Python for Holberton School'}
+    payload = {"limit": "100", "after": after}
+    url = 'https://www.reddit.com/r/{}/hot.json'.format(subreddit)
+    client = requests.session()
+    client.headers = headers
+    r = client.get(url, allow_redirects=False, params=payload)
+    if r.status_code == 200:
+        list_titles = r.json()['data']['children']
+        after = r.json()['data']['after']
+        if after is not None:
+            try:
+                host_list.append(list_titles[len(host_list)]['data']['title'])
+            except:
+                pass
+            count_words(subreddit, word_list, after, host_list)
+        else:
+            my_count = [0] * len(word_list)
+            for title in host_list:
+                for pos in range(len(word_list)):
+                    counter = len([x for x in title.split()
+                                   if x == word_list[pos]])
+                    my_count[pos] += counter
+            for pos in range(len(word_list)):
+                print("{}: {}".format(word_list[pos], my_count[pos]))
+    else:
+        return(None)
+'''
