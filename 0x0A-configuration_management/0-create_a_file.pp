@@ -1,6 +1,6 @@
 # Creates a file in /tmp
 
-file { '/tmp':
+file { 'school':
   ensure  => 'present',
   path    => '/tmp/school',
   mode    => '0744',
